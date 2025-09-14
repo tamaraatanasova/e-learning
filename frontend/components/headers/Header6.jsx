@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { socialLinks } from "@/data/socials";
+
 export default function Header6() {
   return (
     <header className="relative wrapper !bg-transparent !opacity-100 p-3">

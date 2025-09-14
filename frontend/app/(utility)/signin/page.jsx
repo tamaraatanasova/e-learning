@@ -1,4 +1,3 @@
-import Footer5 from "@/components/footers/Footer5";
 import Header6 from "@/components/headers/Header6";
 import Signin from "@/components/utility/Signin";
 import React from "react";

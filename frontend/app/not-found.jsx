@@ -1,4 +1,3 @@
-import Footer5 from "@/components/footers/Footer5";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -46,7 +45,6 @@ export default function NotFoundPage() {
           </div>
         </section>
       </div>
-      <Footer5 />
     </>
   );
 }
