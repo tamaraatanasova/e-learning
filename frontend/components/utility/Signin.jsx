@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext"; 
-import FaceScanner from "../../components/FaceScanner"; 
-import apiClient from "../lib/api"; 
+import { useAuth } from "../context/AuthContext";
+import FaceScanner from "../../components/FaceScanner";
+import apiClient from "../lib/api";
 import { useRouter } from "next/navigation";
 
 export default function Signin() {
-  const [loginMode, setLoginMode] = useState('password'); 
+  const [loginMode, setLoginMode] = useState('password');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -69,7 +69,9 @@ export default function Signin() {
                         <label htmlFor="loginPassword">Password</label>
                       </div>
                       {error && <p className="text-red-500 text-center text-sm mb-4">{error}</p>}
-                      <button type="submit" className="btn btn-primary rounded-pill btn-login w-100 mb-2" disabled={loading}>
+                      <button type="submit"
+                        className="btn btn-sm btn-primary !w-full !text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:!border-[#3f78e0] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] !rounded-[.4rem] !text-[.8rem] hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)]"
+                        disabled={loading}>
                         {loading ? 'Signing In...' : 'Sign In'}
                       </button>
                     </form>
@@ -86,11 +88,13 @@ export default function Signin() {
                 <div className="divider-icon my-4">or</div>
 
                 {loginMode === 'password' ? (
-                  <button onClick={() => { setLoginMode('face'); setError(''); }} className="btn btn-success rounded-pill w-100">
+                  <button onClick={() => { setLoginMode('face'); setError(''); }} className="btn btn-sm btn-primary !w-full !text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:!border-[#3f78e0] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] !rounded-[.4rem] !text-[.8rem] hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)]"
+                  >
                     Sign In with Face ID
                   </button>
                 ) : (
-                  <button onClick={() => setLoginMode('password')} className="btn btn-secondary rounded-pill w-100">
+                  <button onClick={() => setLoginMode('password')} className="btn btn-sm btn-primary !w-full !text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:!border-[#3f78e0] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] !rounded-[.4rem] !text-[.8rem] hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)]"
+                  >
                     Sign In with Password
                   </button>
                 )}

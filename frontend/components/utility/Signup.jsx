@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import apiClient from "../lib/api"; 
+import apiClient from "../lib/api";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -10,7 +10,7 @@ export default function Signup() {
     email: '',
     password: '',
     password_confirmation: '',
-    role: 'student', 
+    role: 'student',
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -91,7 +91,8 @@ export default function Signup() {
                     </div>
                   </div>
 
-                  <button type="submit" className="btn btn-primary rounded-pill btn-login w-100 mb-2" disabled={loading}>
+                  <button type="submit" className="btn btn-sm btn-primary !w-full !text-white !bg-[#3f78e0] border-[#3f78e0] hover:text-white hover:bg-[#3f78e0] hover:!border-[#3f78e0] active:text-white active:bg-[#3f78e0] active:border-[#3f78e0] disabled:text-white disabled:bg-[#3f78e0] disabled:border-[#3f78e0] !rounded-[.4rem] !text-[.8rem] hover:translate-y-[-0.15rem] hover:shadow-[0_0.25rem_0.75rem_rgba(30,34,40,0.15)]"
+                    disabled={loading}>
                     {loading ? 'Signing Up...' : 'Sign Up'}
                   </button>
                 </form>
