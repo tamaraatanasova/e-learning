@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany; 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -21,7 +21,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'face_embedding', 
+        'face_embedding',
     ];
 
     protected $hidden = [
@@ -32,22 +32,23 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed', 
+        'password' => 'hashed',
     ];
 
-    public function courses()
-    {
-        return $this->belongsToMany(Course::class, 'course_user', 'user_id', 'course_id');
-    }
-    public function news(): HasMany
-    {
-        return $this->hasMany(News::class);
-    }
     public function enrolledCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_user', 'user_id', 'course_id');
     }
-    public function taughtCourses()
+
+    public function news(): HasMany
+    {
+        return $this->hasMany(News::class);
+    }
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class, 'user_id');
+    }
+    public function taughtCourses(): HasMany
     {
         return $this->hasMany(Course::class, 'user_id');
     }

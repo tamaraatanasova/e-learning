@@ -41,8 +41,7 @@ const MaterialItem = ({ material, isProfessorOwner, onDelete, onDownload }) => (
 
 function CourseDetailPage({ params }) {
     const { user } = useAuth();
-    const { id } = params;
-
+    const id = params.id;
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -73,7 +72,7 @@ function CourseDetailPage({ params }) {
         const toastId = toast.loading('Generating new PIN...');
         try {
             await apiClient.post(`/courses/${id}/change-pin`);
-            await fetchCourseDetails(); 
+            await fetchCourseDetails();
             toast.success('New PIN generated successfully!', { id: toastId });
         } catch (err) {
             toast.error('Failed to change PIN.', { id: toastId });

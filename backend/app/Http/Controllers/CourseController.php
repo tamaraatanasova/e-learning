@@ -44,23 +44,33 @@ class CourseController extends Controller
 
         return response()->json($courses);
     }
-    public function indexForUser(Request $request)
-    {
-        $user = $request->user();
-        $courses = [];
+    // app/Http/Controllers/CourseController.php
 
-        if ($user->role === 'professor') {
-            $courses = $user->taughtCourses()->with('professor:id,name')->latest()->get();
-        } else { 
-            $courses = $user->courses()->with('professor:id,name')->latest()->get();
-        }
+ public function indexForUser(Request $request)
+{
+    $user = $request->user();
+    $courses = [];
 
-        return response()->json($courses);
+    if ($user->role === 'professor') {
+        // КОРИСТИ ЈА ТОЧНАТА РЕЛАЦИЈА ЗА ПРОФЕСОРИ
+        $courses = $user->taughtCourses()->with('professor:id,name')->latest()->get();
+    } else {
+        // КОРИСТИ ЈА ТОЧНАТА РЕЛАЦИЈА ЗА СТУДЕНТИ
+        $courses = $user->enrolledCourses()->with('professor:id,name')->latest()->get();
     }
+
+    return response()->json($courses);
+}
     public function store(Request $request)
     {
-        Gate::denies('create', Course::class);
+        // Провери дали корисникот НЕМА дозвола да креира
+        if (Gate::denies('create', Course::class)) {
+            // Ако нема, прекини го извршувањето со "403 Forbidden" грешка
+            abort(403, 'You are not authorized to create a course.');
+        }
 
+        // Овој дел од кодот ќе се изврши САМО АКО Gate::denies() врати false
+        // (т.е. корисникот ИМА дозвола)
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -68,6 +78,7 @@ class CourseController extends Controller
 
         $validated['pin_code'] = Str::upper(Str::random(6));
 
+        // Сега, кога сме сигурни дека корисникот е авторизиран, ова ќе работи правилно
         $course = $request->user()->courses()->create($validated);
 
         return response()->json($course, 201);
@@ -104,7 +115,7 @@ class CourseController extends Controller
 
         $course->delete();
 
-        return response()->json(null, 204); 
+        return response()->json(null, 204);
     }
     public function listStudents(Course $course)
     {

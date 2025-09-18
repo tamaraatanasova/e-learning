@@ -2,9 +2,12 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import FaceScanner from "../../components/FaceScanner";
+import dynamic from "next/dynamic";
 import apiClient from "../lib/api";
 import { useRouter } from "next/navigation";
+
+const FaceScanner = dynamic(() => import("../../components/FaceScanner"), { ssr: false });
+
 
 export default function Signin() {
   const [loginMode, setLoginMode] = useState('password');
