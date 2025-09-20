@@ -39,7 +39,7 @@ function FaceScanner({ onFaceDetected, onError }) {
                         clearInterval(intervalId);
                     }
                 }
-            }, 500);
+            }, 2000);
         };
 
         const videoEl = videoRef.current;

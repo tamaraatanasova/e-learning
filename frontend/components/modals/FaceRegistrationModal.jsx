@@ -25,9 +25,13 @@ function FaceRegistrationModal({ show, onClose, onSuccess }) {
         const descriptorArray = Array.from(descriptor);
 
         try {
+            // --- THIS IS THE FIX ---
+            // The descriptorArray is now sent directly as a JavaScript array.
+            // Axios will automatically convert it to a JSON array in the request.
             await apiClient.post('/user/register-face', {
-                face_embedding: JSON.stringify(descriptorArray),
+                face_embedding: descriptorArray,
             });
+            // --- END OF FIX ---
 
             setRegistrationSuccess(true);
 
@@ -38,7 +42,9 @@ function FaceRegistrationModal({ show, onClose, onSuccess }) {
             }, 2500);
 
         } catch (err) {
-            setError('Failed to register face. Please try again.');
+            // Improved error handling to show Laravel's validation message if available
+            const errorMessage = err.response?.data?.message || 'Failed to register face. Please try again.';
+            setError(errorMessage);
             console.error(err);
         } finally {
             setLoading(false);

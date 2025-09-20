@@ -13,10 +13,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:student,professor',
+            'role'     => 'required|in:student,professor',
         ]);
 
         if ($validator->fails()) {
@@ -24,18 +24,22 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role'     => $request->role,
         ]);
 
-        return response()->json(['message' => 'User registered successfully! Please register your face.', 'user' => $user]);
+        return response()->json([
+            'message' => 'User registered successfully! Please register your face.',
+            'user'    => $user
+        ]);
     }
+
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
@@ -50,31 +54,30 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login successful!',
+            'message'      => 'Login successful!',
             'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
+            'token_type'   => 'Bearer',
+            'user'         => $user
         ]);
     }
 
     public function registerFace(Request $request)
     {
         $validated = $request->validate([
-            'face_embedding' => 'required|json'
+            'face_embedding' => 'required|array'
         ]);
 
         $user = $request->user();
-
-        $user->face_embedding = $validated['face_embedding'];
+        $user->face_embedding = json_encode($validated['face_embedding']); // store as JSON
         $user->save();
-
-        $user->refresh();
 
         return response()->json([
             'message' => 'Face ID registered successfully!',
-            'user' => $user
+            'user'    => $user
         ]);
     }
+
+
     public function loginBiometric(Request $request)
     {
         $request->validate([
@@ -83,20 +86,24 @@ class AuthController extends Controller
 
         $loginEmbedding = $request->face_embedding;
         $users = User::whereNotNull('face_embedding')->get();
-        $matchThreshold = 0.5;
+        $matchThreshold = 0.6; // safer default
 
         foreach ($users as $user) {
             $storedEmbedding = json_decode($user->face_embedding, true);
+            if (!$storedEmbedding || count($storedEmbedding) !== count($loginEmbedding)) {
+                continue;
+            }
 
             $distance = $this->euclideanDistance($storedEmbedding, $loginEmbedding);
 
             if ($distance < $matchThreshold) {
                 $token = $user->createToken('auth_token')->plainTextToken;
+
                 return response()->json([
-                    'message' => 'Login successful!',
+                    'message'      => 'Login successful!',
                     'access_token' => $token,
-                    'token_type' => 'Bearer',
-                    'user' => $user
+                    'token_type'   => 'Bearer',
+                    'user'         => $user
                 ]);
             }
         }
@@ -107,14 +114,14 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
+
         return response()->json(['message' => 'Logged out successfully']);
     }
 
     private function euclideanDistance(array $a, array $b): float
     {
         $sum = 0;
-        $count = count($a);
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < count($a); $i++) {
             $sum += pow($a[$i] - $b[$i], 2);
         }
         return sqrt($sum);

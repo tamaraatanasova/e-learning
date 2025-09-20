@@ -26,7 +26,10 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             localStorage.removeItem('authToken');
             delete apiClient.defaults.headers.common['Authorization'];
-            router.push('/signin');
+            // Only push to signin if not already there to avoid navigation loops
+            if (window.location.pathname !== '/signin') {
+                router.push('/signin');
+            }
         }
     }, [router]);
 
@@ -37,12 +40,22 @@ export const AuthProvider = ({ children }) => {
         });
     }, [refreshUser]);
 
-    const login = async (credentials) => {
-        const response = await apiClient.post('/login', credentials);
-        const { access_token, user } = response.data;
+    /**
+     * NEW: Centralized function to handle post-login actions.
+     * This ensures that no matter how a user logs in, the app state
+     * is updated consistently.
+     */
+    const handleLoginSuccess = (data) => {
+        const { access_token, user } = data;
         localStorage.setItem('authToken', access_token);
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-        setUser(user);
+        setUser(user); // This is the crucial step for updating the global state.
+    };
+
+    const login = async (credentials) => {
+        const response = await apiClient.post('/login', credentials);
+        // Use the centralized handler
+        handleLoginSuccess(response.data);
         router.push('/dashboard');
     };
 
@@ -63,12 +76,14 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         refreshUser,
+        handleLoginSuccess, // Expose the new function
     };
 
     return (
         <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
+
     );
 };
 
