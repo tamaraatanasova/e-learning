@@ -34,21 +34,27 @@ export default function Signin() {
     }
   };
 
+  const [statusMessage, setStatusMessage] = useState('');
+
   const handleFaceDetected = async (descriptor) => {
     setLoading(true);
     setError('');
+    setStatusMessage('Face detected, verifying identity...');
     try {
       const response = await apiClient.post('/login/biometric', { face_embedding: descriptor });
       const { access_token, user } = response.data;
       localStorage.setItem('authToken', access_token);
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      window.location.href = `/dashboard`;
+      setStatusMessage('Login successful! Redirecting...');
+      setTimeout(() => router.push('/dashboard'), 1500);
     } catch (err) {
       setError('Face not recognized. Please try again or use your password.');
+      setStatusMessage('');
       setLoading(false);
       setTimeout(() => setLoginMode('password'), 3000);
     }
   };
+
 
   return (
     <section className="wrapper">
